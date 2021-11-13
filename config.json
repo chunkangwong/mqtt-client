@@ -1,0 +1,14 @@
+{
+  "project_id": "portsmouth-iot",
+  "device_id": "raspi01",
+  "registry_id": "raspi",
+  "private_key_file": "rsa_private.pem",
+  "algorithm": "RS256",
+  "ca_certs": "roots.pem",
+  "cloud_region": "asia-east1",
+  "jwt_expires_minutes": 20,
+  "listen_dur": 60,
+  "mqtt_bridge_hostname": "mqtt.googleapis.com",
+  "mqtt_bridge_port": 8883,
+  "message_type": "event"
+}

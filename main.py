@@ -315,22 +315,22 @@ def mqtt_device_demo(args):
     global MAXIMUM_BACKOFF_TIME
 
     # Publish to the events or state topic based on the flag.
-    sub_topic = "events" if args.message_type == "event" else "state"
+    sub_topic = "events" if args["message_type"] == "event" else "state"
 
-    mqtt_topic = "/devices/{}/{}".format(args.device_id, sub_topic)
+    mqtt_topic = "/devices/{}/{}".format(args["device_id"], sub_topic)
 
     jwt_iat = datetime.datetime.utcnow()
-    jwt_exp_mins = args.jwt_expires_minutes
+    jwt_exp_mins = args["jwt_expires_minutes"]
     client = get_client(
-        args.project_id,
-        args.cloud_region,
-        args.registry_id,
-        args.device_id,
-        args.private_key_file,
-        args.algorithm,
-        args.ca_certs,
-        args.mqtt_bridge_hostname,
-        args.mqtt_bridge_port,
+        args["project_id"],
+        args["cloud_region"],
+        args["registry_id"],
+        args["device_id"],
+        args["private_key_file"],
+        args["algorithm"],
+        args["ca_certs"],
+        args["mqtt_bridge_hostname"],
+        args["mqtt_bridge_port"],
     )
     GPIO.add_event_detect(PIR_PIN, GPIO.RISING, lambda x: event_handler(client, mqtt_topic))
 
@@ -351,7 +351,7 @@ def mqtt_device_demo(args):
             print("Waiting for {} before reconnecting.".format(delay))
             time.sleep(delay)
             minimum_backoff_time *= 2
-            client.connect(args.mqtt_bridge_hostname, args.mqtt_bridge_port)
+            client.connect(args["mqtt_bridge_hostname"], args["mqtt_bridge_port"])
 
         # payload = "{}/{}-payload-{}".format(args.registry_id, args.device_id, i)
         # print("Publishing message {}/{}: '{}'".format(i, args.num_messages, payload))
@@ -363,15 +363,15 @@ def mqtt_device_demo(args):
             client.loop()
             client.disconnect()
             client = get_client(
-                args.project_id,
-                args.cloud_region,
-                args.registry_id,
-                args.device_id,
-                args.private_key_file,
-                args.algorithm,
-                args.ca_certs,
-                args.mqtt_bridge_hostname,
-                args.mqtt_bridge_port,
+                args["project_id"],
+                args["cloud_region"],
+                args["registry_id"],
+                args["device_id"],
+                args["private_key_file"],
+                args["algorithm"],
+                args["ca_certs"],
+                args["mqtt_bridge_hostname"],
+                args["mqtt_bridge_port"],
             )
         # [END iot_mqtt_jwt_refresh]
         # Publish "payload" to the MQTT topic. qos=1 means at least once
@@ -387,8 +387,11 @@ def mqtt_device_demo(args):
 
 
 def main():
-    args = parse_command_line_args()
-    mqtt_device_demo(args)
+    # config = parse_command_line_args()
+    with open('config.json') as f:
+       config_content = f.read()
+    config = json.loads(config_content)
+    mqtt_device_demo(config)
     print("Finished.")
 
 
